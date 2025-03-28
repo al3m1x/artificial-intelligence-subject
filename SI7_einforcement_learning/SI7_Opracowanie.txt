@@ -1,0 +1,37 @@
+Juliusz Radziszewski, s193504, Informatyka sem IV, grupa 1
+
+Omówienie laboratorium nr 7 SI
+Tematem laboratorium było uczenie ze wzmocnieniem. Koncepcja tego uczenia maszynowego polega na maksymalizacji zysku
+i minimalizacji strat z interakcji agenta ze środowiskiem. W przypadku omawianej gry gracz musi zebrać monety, które
+gwarantują pewien zysk, jednak za każdy ruch odejmowane są punkty. Należy również omijać bomby, za które jest
+-1000 pkt.
+
+Pierwszym zadaniem było dostosowanie parametrów, aby kod i uczenie treningowe działało poprawnie.
+Learning_rate ustawiłem na wartość 0.1. Proponowane są z reguły wartości z przedziału <0.01,0.1> i tutaj wyjatkowo
+wartość skrajna wypadła najlepiej. Oczywiście są odczuwalne pewne wahania, dla niskich wartości learning_rate agent jest stabilniejszy,
+ale uczy się wolno i w pewnym momencie nie poprawia się praktycznie wcale.
+Gamma = 0.99 określa jak bardzo agent ceni sobie przyszłe nagrody w porównaniu z nagrodami bieżącymi.
+Epsilon = 0.95 jest to początkowe prawdopodobieństwo eksploracji.
+Eps_decrement = 0.000016 - wartość o którą zmiejszany jest epsilon przy każdej iteracji.
+Eps_min = 0.000001 - epsilon nie może zejść niżej od tej wartości.
+
+Następnie trzeba było uzupełnić funkcję init_q_table, czyli tylko stworzyć tablicę Q wypełnioną danymi wartościami
+początkowymi.
+
+W update_action_policy aktualizowana jest wartość epsilon o nasz ustalony eps_decrement. Nie można zejść poniżej
+wartości eps_min.
+
+W choose_action implementuję strategię wyboru akcji eps-zachłanną (czyli w instrukcji pseudokod EpsGreedy).
+Dokonywana jest tu decyzja, czy chcemy eksploatować (zawęzić poszukiwania akcji i stanów do tych najbardziej 
+prosperujących), czy eksplorować - czyli wykonać losową akcję.
+
+Ostatnia zmieniona przeze mnie funkcja to learn, która implementuje proces uczenia się agenta.
+Stosuję metodę różnic czasowych do aktualizacji wartości Q na podstawie nowo zdobytego 
+doświadczenia. Wartość delta oblicza się jako różnicę między nowym szacunkiem użyteczności a bieżącą wartością Q. 
+Aktualizuję następnie bieżącą wartość Q poprzez dodanie do niej skorygowanego wyniku, skalowanego przez 
+learning rate, co pozwala agentowi stopniowo uczyć się na podstawie swoich doświadczeń.
+
+Wyniki testów, które uzyskuję dla wytrenowanych modeli przy powyższych parametrach wahają się w granicach <830,1000> punktów ze
+stosunkiem zwycięstw około 90-95% (częściej są te lepsze). Dla danego pojedynczego modelu wartości praktycznie się nie wahają - 
+różnica kilkunastu/kilkudziesięciu punktów. Wahania dla różnych modeli występują, lecz dla mniejszego learning_rate (np. 0.06) wyniki 
+testowe dla różnych wytrenowanych modeli oscylują częściej w granicach <820,950>, co jest mniej satysfakcjonujące.
